@@ -29,27 +29,31 @@ public class ServletLogin extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("text/html/charset=UTF-8");
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
         String username = request.getParameter("username");
         String password = request.getParameter("password");
-
+        User userLogin = null;
+        HttpSession session = request.getSession(true);
         if (userService.login(username, password)){
-            System.out.println("Dang nhap thanh cong");
-            User user = userService.getUser(username,password);
-            if (user.getRole().equals("USER")){
-                request.setAttribute("username", username);
+            userLogin = userService.getByUsername(username);
+            session.setAttribute("userLogin",userLogin);
+            if (userLogin.getRole().equals("USER")){
                 RequestDispatcher dispatcher = request.getRequestDispatcher("/home.jsp");
                 dispatcher.forward(request, response);
             }
-            if (user.getRole().equals("ADMIN") || user.getRole().equals("BOSS")){
-                request.setAttribute("username", username);
+            if (userLogin.getRole().equals("ADMIN") || userLogin.getRole().equals("BOSS")){
+                request.setAttribute("admin",userLogin);
                 RequestDispatcher dispatcher = request.getRequestDispatcher("pages/dashboard.jsp");
                 dispatcher.forward(request, response);
             }
-        } else{
+           } else{
             String message = "Login failed, Plase check username and password";
             request.setAttribute("message",message);
             RequestDispatcher dispatcher = request.getRequestDispatcher("/index.jsp");
             dispatcher.forward(request, response);
         }
+
     }
 }

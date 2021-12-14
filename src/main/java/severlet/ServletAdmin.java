@@ -25,6 +25,9 @@ public class ServletAdmin extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("text/html/charset=UTF-8");
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
         String action = request.getParameter("action");
         if (action == null) {
             action = "";
@@ -32,9 +35,6 @@ public class ServletAdmin extends HttpServlet {
         switch (action) {
             case "usermanager":
                 showListUser(request, response);
-                break;
-            case "musicmanager":
-                listMusic(request, response);
                 break;
             case "block":
                 try {
@@ -52,13 +52,7 @@ public class ServletAdmin extends HttpServlet {
         }
     }
 
-    private void listMusic(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setContentType("text/html/charset=UTF-8");
-        request.setCharacterEncoding("UTF-8");
-        response.setCharacterEncoding("UTF-8");
-        RequestDispatcher dispatcher = request.getRequestDispatcher("pages/musicmanager.jsp");
-        dispatcher.forward(request, response);
-    }
+
 
     private void setStatus(HttpServletRequest request, HttpServletResponse response, String status) throws SQLException, IOException, ServletException {
         int id = Integer.parseInt(request.getParameter("id"));
@@ -71,33 +65,26 @@ public class ServletAdmin extends HttpServlet {
             userService.updateUser(user);
             request.setAttribute("message", status +" "+ user.getFullName() + " Success!");
         }
-        encoding(request, response);
-        List<User> listUser = userService.getUsers();
-        String username = request.getParameter("adminname");
-        User admin =  userService.getByUsername(username);
-        request.setAttribute("admin",admin);
-        request.setAttribute("listUser", listUser);
-        RequestDispatcher dispatcher = request.getRequestDispatcher("pages/usermanager.jsp");
-        dispatcher.forward(request, response);
+        showListUser(request,response);
     }
 
 
 
     private void showListUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        encoding(request, response);
         List<User> listUser = userService.getUsers();
-        String username = request.getParameter("username");
-        User admin =  userService.getByUsername(username);
-        System.out.println(admin);
-        request.setAttribute("admin",admin);
         request.setAttribute("listUser", listUser);
-        request.setAttribute("username", username);
+        HttpSession session = request.getSession(true);
+        User admin = (User) session.getAttribute("userLogin");
+        request.setAttribute("admin", admin);
         RequestDispatcher dispatcher = request.getRequestDispatcher("pages/usermanager.jsp");
         dispatcher.forward(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.setContentType("text/html/charset=UTF-8");
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
         String action = request.getParameter("action");
         if (action == null) {
             action = "";
@@ -128,15 +115,8 @@ public class ServletAdmin extends HttpServlet {
         String from = request.getParameter("inputFromAdmin");
         String contentMail = "\n" + title + "\n" + content + "\n" + "From: " +from;
         SendKeyToMail.send(emailUser, contentMail);
-        encoding(request, response);
-        List<User> listUser = userService.getUsers();
-        String username = request.getParameter("inputFromAdmin");
-        User admin =  userService.getByUsername(username);
         request.setAttribute("message", "Send Mail To " + emailUser +" Success!");
-        request.setAttribute("admin",admin);
-        request.setAttribute("listUser", listUser);
-        RequestDispatcher dispatcher = request.getRequestDispatcher("pages/usermanager.jsp");
-        dispatcher.forward(request, response);
+        showListUser(request,response);
     }
 
     private void addNewAdmin(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException, ServletException {
@@ -147,20 +127,8 @@ public class ServletAdmin extends HttpServlet {
         String role = "ADMIN";
         String status = "ACTIVE";
         User user = new User(fullName, username, email, password, role, status);
-        String adminName = request.getParameter("adminNameform");
         userService.addUser(user);
-        encoding(request, response);
-        User admin =  userService.getByUsername(adminName);
-        request.setAttribute("admin",admin);
-        List<User> listUser = userService.getUsers();
-        request.setAttribute("listUser", listUser);
-        RequestDispatcher dispatcher = request.getRequestDispatcher("pages/usermanager.jsp");
-        dispatcher.forward(request, response);
+        showListUser(request,response);
     }
 
-    private void encoding(HttpServletRequest request, HttpServletResponse response) throws UnsupportedEncodingException {
-        response.setContentType("text/html/charset=UTF-8");
-        request.setCharacterEncoding("UTF-8");
-        response.setCharacterEncoding("UTF-8");
-    }
 }

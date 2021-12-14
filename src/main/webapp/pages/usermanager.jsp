@@ -173,7 +173,7 @@
                                 <a href="/pages?action=usermanager">Users</a>
                             </li>
                             <li>
-                                <a href="/pages?action=musicmanager">Musics</a>
+                                <a href="/song?action=musicmanager">Musics</a>
                             </li>
                         </ul>
                     </li>

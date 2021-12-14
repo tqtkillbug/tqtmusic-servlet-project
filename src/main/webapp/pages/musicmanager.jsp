@@ -1,3 +1,4 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -8,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Startmin - Bootstrap Admin Theme</title>
+    <title>TQT Music Manager</title>
 
     <!-- Bootstrap Core CSS -->
     <link href="../css/bootstrap.min.css" rel="stylesheet">
@@ -114,7 +115,7 @@
                 </li>
                 <li class="dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                        <i class="fa fa-user fa-fw"></i> Name Account <b class="caret"></b>
+                        <i class="fa fa-user fa-fw"></i>${admin.fullName}<b class="caret"></b>
                     </a>
                     <ul class="dropdown-menu dropdown-user">
                         <li><a href="#"><i class="fa fa-user fa-fw"></i> User Profile</a>
@@ -158,9 +159,17 @@
                             </ul>
                             <!-- /.nav-second-level -->
                         </li>
-                        <li>
-                            <a href="tables.html"><i class="fa fa-table fa-fw"></i> Tables</a>
+                        <li> <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Manager<span class="fa arrow"></span></a>
+                            <ul class="nav nav-second-level">
+                                <li>
+                                    <a href="/pages?action=usermanager">Users</a>
+                                </li>
+                                <li>
+                                    <a href="/pages?action=musicmanager">Musics</a>
+                                </li>
+                            </ul>
                         </li>
+
                         <li>
                             <a href="forms.html"><i class="fa fa-edit fa-fw"></i> Forms</a>
                         </li>
@@ -277,24 +286,26 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr class="odd gradeX">
-                                                <td>1</td>
-                                                <td><img src="/pages/Tổng-hợp-hình-ảnh-gái-xinh-dễ-thương-cute-nhất-1.jpg" alt="" height="50" width="50"></td>
-                                                <td>Hãy Trở Về Bên Anh</td>
-                                                <td>Cao Thái Sơn</td>
-                                                <td>music/hayvebenanh.mp3</td>
-                                                <td>ACTIVE</td>
-                                                <td>
-                                                    <button class="btn btn-outline btn-danger" data-toggle="modal"
-                                                        data-target="#editModal">Edit</button>
-                                                </td>
-                                                <td>
-                                                    <button class="btn btn-outline btn-success" data-toggle="modal"
-                                                        data-target="#deleteModal">Delete</button>
-                                                </td>
-                                            </tr>
 
+                                            <c:forEach var="song" items="${listSong}">
+                                                <tr class="odd gradeX">
+                                                    <td><c:out value="${song.id}"/></td>
+                                                    <td><img src="<c:out value='${song.logoPath}'/>" alt="" height="70" width="70" style="padding:3px" ></td>
+                                                    <td style="width: 200px"><c:out value="${song.songName}"/></td>
+                                                    <td><c:out value="${song.singerName}"/></td>
+                                                    <td><c:out value="${song.songPath}"/></td>
+                                                    <td><c:out value="${song.status}"/></td>
+                                                    <td>
+                                                        <button class="btn btn-outline btn-primary" data-toggle="modal"
+                                                                data-target="#editModal" onclick="editsong(${song.id},'${song.songName}','${song.singerName}')" >Edit</button>
+                                                    </td>
+                                                    <td style="text-align: center">
+                                                        <button class="btn btn-outline btn-danger" data-toggle="modal"
+                                                                data-target="#deleteModal" onclick="deleteSong(${song.id})">Delete</button>
+                                                    </td>
+                                                </tr>
 
+                                            </c:forEach>
                                             
                                         </tbody>
                                     </table>
@@ -315,32 +326,30 @@
                                             <div class="modal-body">
                                                 <div class="row">
                                                     <div class="col-md-12 mx-auto">
-                                                        <form>
+                                                        <form action="/song?action=editSong" method="post">
                                                             <div class="row">
                                                                 <div class="col-md-12 mx-auto">
                                                                         <div class="form-group row">
                                                                             <div class="col-sm-6">
                                                                                 <label for="inputSongname">Song name</label>
                                                                                 <input type="text" class="form-control"
-                                                                                    id="inputSongname" placeholder="Song name" required>
+                                                                                    id="inputEditSongname" name="inputEditSongname" placeholder="Song name" required>
                                                                             </div>
                                                                             <div class="col-sm-6">
                                                                                 <label for="inputSingerName">Singer Name</label>
                                                                                 <input type="text" class="form-control"
-                                                                                    id="inputSingerName" placeholder="Singer Name" required>
+                                                                                    id="inputEditSingerName" name="inputEditSingerName" placeholder="Singer Name" required>
                                                                             </div>
                                                                         </div>
+                                                                    <input type="text" hidden
+                                                                           id="editId" name="editId" required>
                                                                         <div class="form-group row">
-                                                                            <div class="col-sm-6" >
-                                                                                <label for="inputSongFile" >Up Song File</label>
-                                                                                <input id="inputSongFile" type="file">
-                                                                            </div>
                                                                             <div class="col-sm-6">
                                                                                 <label for="statusselect" >Select Status</label>
                                                                                 <br>
-                                                                               <select name="statusselect" id="statusselect">
-                                                                                <option value="active">Active</option>
-                                                                                <option value="blocked">Block</option>
+                                                                               <select  name="statusselect" id="statusselect">
+                                                                                <option id="optionAlivai"  value="alivaible">ALIVAILBLE</option>
+                                                                                <option  id="optionDisab" value="disabled">DISABLED</option>
                                                                                </select>
                                                                             </div>
                                                                      </div>
@@ -377,15 +386,20 @@
                                                 <i class="fa fa-info-circle"></i>
                                             </div>
                                         </div>
+
                                         <div class="modal-body">
                                             <p style="margin-left: 60px;">Do you really want to delete this song? This
                                                 process cannot be undone.</p>
                                         </div>
-                                        <div class="modal-footer justify-content-center">
-                                            <button type="button" class="btn btn-secondary"
-                                                data-dismiss="modal">Cancel</button>
-                                            <button type="button" class="btn btn-danger">Delete</button>
-                                        </div>
+                                        <form action="/song?action=deleteSong" method="post">
+                                            <input type="text" name="deleteid" id="deleteid" hidden>
+                                            <div class="modal-footer justify-content-center">
+                                                <button type="button" class="btn btn-secondary"
+                                                        data-dismiss="modal">Cancel</button>
+                                                <button type="submit" class="btn btn-danger">Delete</button>
+                                            </div>
+                                        </form>
+
                                     </div>
                                 </div>
                             </div>
@@ -404,29 +418,18 @@
                                         <div class="modal-body">
                                             <div class="row">
                                                 <div class="col-md-12 mx-auto">
-                                                    <form>
+                                                    <form action="/song?action=upNewSong" method="post" enctype='multipart/form-data'>
                                                         <div class="row">
                                                             <div class="col-md-12 mx-auto">
-                                                                    <div class="form-group row">
-                                                                        <div class="col-sm-6">
-                                                                            <label for="inputSongname">Song name</label>
-                                                                            <input type="text" class="form-control"
-                                                                                id="inputSongname" placeholder="Song name" required>
-                                                                        </div>
-                                                                        <div class="col-sm-6">
-                                                                            <label for="inputSingerName">Singer Name</label>
-                                                                            <input type="text" class="form-control"
-                                                                                id="inputSingerName" placeholder="Singer Name" required>
-                                                                        </div>
                                                                     </div>
-                                                                <div class="form-group row">
+                                                                <div style="margin-left: 15px" class="form-group row">
                                                                     <div class="col-sm-6">
                                                                         <label for="upFilemp3">Up Song File</label>
-                                                                        <input id="upFilemp3" type="file" required>
+                                                                        <input id="upFilemp3" accept=".mp3" type="file" name="songFile" required>
                                                                     </div>
                                                                     <div class="col-sm-6">
                                                                         <label for="upFileimg">Up Logo Song File</label>
-                                                                        <input id="upFileimg" type="file" required>
+                                                                        <input id="upFileimg" accept=".jpg, .png" type="file" name="logoFile" required>
                                                                     </div>
                                                                 </div>
 
@@ -479,17 +482,14 @@
                                 });
                             });
 
-                            function checkmatchpassword() {
-                                let pass = document.getElementById("inputPassword").value
-                                let confirmPassword = document.getElementById("inputRe-Password").value;
-                                if (pass != confirmPassword) {
-                                    document.getElementById("labelpassmatch").innerHTML = "Password Not Match!!";
-                                    document.getElementById("addnewadminbtn").disabled = true;
-                                } else {}
-                                document.getElementById("addnewadminbtn").disabled = true;
-                            }
-                            function editsong(id){
 
+                            function editsong(id,songName,singerName){
+                                document.getElementById("editId").value = id;
+                                document.getElementById("inputEditSongname").value = songName;
+                                document.getElementById("inputEditSingerName").value = singerName;
+                            }
+                            function deleteSong(id){
+                                document.getElementById("deleteid").value = id;
                             }
                         </script>
 

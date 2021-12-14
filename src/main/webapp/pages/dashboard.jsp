@@ -113,7 +113,7 @@
                     </li>
                     <li class="dropdown">
                         <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                            <i class="fa fa-user fa-fw"></i> ${username}<b class="caret"></b>
+                            <i class="fa fa-user fa-fw"></i> ${admin.fullName}<b class="caret"></b>
                         </a>
                         <ul class="dropdown-menu dropdown-user">
                             <li><a href="#"><i class="fa fa-user fa-fw"></i> User Profile</a>
@@ -165,10 +165,10 @@
                             <li> <a href="#"><i class="fa fa-bar-chart-o fa-fw"></i> Manager<span class="fa arrow"></span></a>
                                 <ul class="nav nav-second-level">
                                     <li>
-                                        <a href="/pages?action=usermanager&username=${username}">Users</a>
+                                        <a href="/pages?action=usermanager">Users</a>
                                     </li>
                                     <li>
-                                        <a href="/pages?action=musicmanager&username=${username}">Musics</a>
+                                        <a href="/song?action=musicmanager">Musics</a>
                                     </li>
                                 </ul>
                             </li>

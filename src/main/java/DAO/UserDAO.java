@@ -13,10 +13,6 @@ import java.util.List;
 public class UserDAO implements IUserDAO {
 
 
-    private String jdbcURL = "jdbc:mysql://localhost:3306/demo?useSSL=false";
-    private String jdbcUsername = "root";
-    private String jdbcPassword = "tientran123@";
-
     private static final String SELECT_USER_BY_USERNAME_AND_PASSWORD = "select username,password,role from user where username = ? and password = ? ";
     private static final String INSERT_USERS_SQL = "INSERT INTO user (fullname,username,email,password,role,status) VALUES (?, ?,?,?,?,?);";
     private static final String SELECT_USERS_SQL = "select id,fullname,email,gender from user where id =?, email= ?";
@@ -36,7 +32,6 @@ public class UserDAO implements IUserDAO {
     @Override
     public void insertUser(User user) throws SQLException {
         System.out.println(INSERT_USERS_SQL);
-        System.out.println(user);
         // try-with-resource statement will auto close the connection.
         try (Connection connection = MysqlConnection.getInstance().getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(INSERT_USERS_SQL)) {

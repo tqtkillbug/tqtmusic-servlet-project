@@ -26,6 +26,12 @@ dependencies {
 // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-annotations
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.13.0'
 
+    // https://mvnrepository.com/artifact/org.apache.tika/tika-core
+    implementation group: 'org.apache.tika', name: 'tika-core', version: '1.4'
+// https://mvnrepository.com/artifact/org.apache.tika/tika-parsers
+    implementation group: 'org.apache.tika', name: 'tika-parsers', version: '1.4'
+
+
 
 }
 
