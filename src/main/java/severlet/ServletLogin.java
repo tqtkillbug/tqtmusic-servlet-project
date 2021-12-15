@@ -1,5 +1,6 @@
 package severlet;
 
+import model.Song;
 import model.User;
 import services.*;
 
@@ -8,6 +9,7 @@ import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 @WebServlet(name = "ServletLogin", value = "/login")
 public class ServletLogin extends HttpServlet {
@@ -54,6 +56,9 @@ public class ServletLogin extends HttpServlet {
             session.setAttribute("userLogin",userLogin);
             if (userLogin.getRole().equals("USER")){
                 if (userLogin.getStatus().equals("ACTIVE")){
+                    List<Song> songList = songService.selectAllSong();
+                    request.setAttribute("user",userLogin);
+                    request.setAttribute("listSong",songList);
                     RequestDispatcher dispatcher = request.getRequestDispatcher("/home.jsp");
                     dispatcher.forward(request, response);
                 } else {

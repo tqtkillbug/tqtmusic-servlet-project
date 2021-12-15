@@ -10,7 +10,7 @@ public class MysqlConnection {
     private String jdbcPassword = "tientran123@";
     private String databaseName;
     private static MysqlConnection instance;
-
+    
     private MysqlConnection() {
 
     }
