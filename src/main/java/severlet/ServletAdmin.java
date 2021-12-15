@@ -51,6 +51,7 @@ public class ServletAdmin extends HttpServlet {
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
+                break;
             case "dashboard":
                 loadDashboard(request,response);
                 break;
@@ -103,7 +104,7 @@ public class ServletAdmin extends HttpServlet {
         List<User> listUser = userService.getUsers();
         request.setAttribute("listUser", listUser);
         HttpSession session = request.getSession(true);
-        User admin = (User) session.getAttribute("userogin");
+        User admin = (User) session.getAttribute("userLogin");
         if (admin!=null){
             request.setAttribute("admin", admin);
             RequestDispatcher dispatcher = request.getRequestDispatcher("pages/usermanager.jsp");

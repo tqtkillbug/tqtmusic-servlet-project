@@ -53,21 +53,36 @@ public class ServletLogin extends HttpServlet {
             userLogin = userService.getByUsername(username);
             session.setAttribute("userLogin",userLogin);
             if (userLogin.getRole().equals("USER")){
-                RequestDispatcher dispatcher = request.getRequestDispatcher("/home.jsp");
-                dispatcher.forward(request, response);
+                if (userLogin.getStatus().equals("ACTIVE")){
+                    RequestDispatcher dispatcher = request.getRequestDispatcher("/home.jsp");
+                    dispatcher.forward(request, response);
+                } else {
+                    String message = "Login failed, Your Account has been blocked";
+                    request.setAttribute("message",message);
+                    RequestDispatcher dispatcher = request.getRequestDispatcher("/index.jsp");
+                    dispatcher.forward(request, response);
+                }
             }
+
             if (userLogin.getRole().equals("ADMIN") || userLogin.getRole().equals("BOSS")){
-                ArrayList<Integer> quantityList = new ArrayList<>();
-                int adminQuantity = userService.getCountByRole("ADMIN");
-                int userQuantity = userService.getCountByRole("USER");
-                int songQuantity = songService.getSongCount();
-                quantityList.add(adminQuantity);
-                quantityList.add(userQuantity);
-                quantityList.add(songQuantity);
-                request.setAttribute("quantity", quantityList);
-                request.setAttribute("admin",userLogin);
-                RequestDispatcher dispatcher = request.getRequestDispatcher("pages/dashboard.jsp");
-                dispatcher.forward(request, response);
+                if (userLogin.getStatus().equals("ACTIVE")){
+                    ArrayList<Integer> quantityList = new ArrayList<>();
+                    int adminQuantity = userService.getCountByRole("ADMIN");
+                    int userQuantity = userService.getCountByRole("USER");
+                    int songQuantity = songService.getSongCount();
+                    quantityList.add(adminQuantity);
+                    quantityList.add(userQuantity);
+                    quantityList.add(songQuantity);
+                    request.setAttribute("quantity", quantityList);
+                    request.setAttribute("admin",userLogin);
+                    RequestDispatcher dispatcher = request.getRequestDispatcher("pages/dashboard.jsp");
+                    dispatcher.forward(request, response);
+                } else{
+                    String message = "Login failed, Your Account has been blocked";
+                    request.setAttribute("message",message);
+                    RequestDispatcher dispatcher = request.getRequestDispatcher("/index.jsp");
+                    dispatcher.forward(request, response);
+                }
             }
            } else{
             String message = "Login failed, Plase check username and password";

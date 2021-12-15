@@ -215,7 +215,7 @@
                                         <th>Username</th>
                                         <th>Email Address</th>
                                         <th>Role</th>
-                                        <th>Status</th>
+                                        <th >Status</th>
                                         <th></th>
                                         <th></th>
                                     </tr>
@@ -232,16 +232,29 @@
                                                     <td><c:out value="${user.username}"/></td>
                                                     <td><c:out value="${user.email}"/></td>
                                                     <td><c:out value="${user.role}"/></td>
-                                                    <td><c:out value="${user.status}"/></td>
+<%--                                                    <td  ><c:out value="${user.status}"/> </td>--%>
+                                                    <c:choose>
+                                                        <c:when test="${user.status=='ACTIVE'}">
+                                                            <td> <button style="width:2px;height: 2px; text-align: center;margin-left: 20px"
+                                                                         class= "btn  btn-success" </button> </td>
+                                                        </c:when>
+
+                                                        <c:otherwise>
+                                                            <td> <button style="width:2px;height: 2px; text-align: center;margin-left: 20px"
+                                                                         class="btn  btn-danger"
+                                                            ></button> </td>
+                                                        </c:otherwise>
+                                                    </c:choose>
+
                                                     <c:choose>
                                                         <%-- Khi tham số color == 'red' --%>
                                                         <c:when test="${user.status=='ACTIVE'}">
                                                             <td style="text-align: center">
-                                                                <button style="width: 80px"
+                                                                <button style="width:80px"
                                                                         class="btn btn-outline btn-danger"
                                                                         data-toggle="modal"
                                                                         data-target="#blockModal"
-                                                                        onclick="blockuser(${user.id},'${admin.username}')">
+                                                                        onclick="blockuser(${user.id})">
                                                                     Block
                                                                 </button>
                                                             </td>
@@ -253,7 +266,7 @@
                                                                         class="btn btn-outline btn-success"
                                                                         data-toggle="modal"
                                                                         data-target="#blockModal"
-                                                                        onclick="acviveuser(${user.id},'${admin.username}')">
+                                                                        onclick="acviveuser(${user.id})">
                                                                     ACTIVE
                                                                 </button>
                                                             </td>
@@ -290,7 +303,7 @@
                                                     <td><c:out value="${user.status}"/></td>
 
                                                     <c:choose>
-                                                        <c:when test="${user.role=='ADMIN' || user.role=='BOSS'}">
+                                                        <c:when test="${user.role=='ADMIN' || user.role=='BOSS' || user.username == admin.username }">
                                                             <td></td>
                                                         </c:when>
                                                         <c:otherwise>
@@ -538,16 +551,18 @@
                             // document.getElementById("addnewadminbtn").disabled = true;
                         }
 
-                        function blockuser(id, adminname) {
+                        function blockuser(id) {
+                            document.getElementById("modalBlockContent").innerText = "Do you really want to Block these user? This process cannot be undone";
                             let block = document.getElementById("blockbtn");
-                            block.href = "/pages?action=block&id=" + id + "&adminname=" + adminname;
+                            document.getElementById("blockbtn").innerText = "BLOCK";
+                            block.href = "/pages?action=block&id=" + id ;
                         }
 
-                        function acviveuser(id, adminname) {
-                            document.getElementById("modalBlockContent").innerText = "Are you sure to activate this user?";
+                        function acviveuser(id) {
+                            document.getElementById("modalBlockContent").innerText = "Are you sure to activate this user? This process cannot be undone";
                             document.getElementById("blockbtn").innerText = "ACTIVE";
                             let block = document.getElementById("blockbtn");
-                            block.href = "/pages?action=active&id=" + id + "&adminname=" + adminname;
+                            block.href = "/pages?action=active&id=" + id ;
                         }
 
 

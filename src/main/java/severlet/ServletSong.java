@@ -100,6 +100,7 @@ public class ServletSong extends HttpServlet {
         String singerName = request.getParameter("inputEditSingerName");
         int songId = Integer.parseInt(request.getParameter("editId"));
         String status = request.getParameter("statusselect");
+        System.out.println(status);
         Song song = new Song(songId, songName, singerName, status);
         songService.updateSong(song);
         listMusic(request, response);

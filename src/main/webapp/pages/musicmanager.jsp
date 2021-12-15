@@ -193,7 +193,7 @@
                                                 <th>ID</th>
                                                 <th>Logo Song</th>
                                                 <th>Song name</th>
-                                                <th>Singer name</th>
+                                                <th style="width: 185px">Singer name</th>
                                                 <th>Path Song</th>
                                                 <th>Status</th>
                                                 <th></th>
@@ -209,7 +209,17 @@
                                                     <td style="width: 200px"><c:out value="${song.songName}"/></td>
                                                     <td><c:out value="${song.singerName}"/></td>
                                                     <td><c:out value="${song.songPath}"/></td>
-                                                    <td><c:out value="${song.status}"/></td>
+                                                    <c:choose>
+                                                        <c:when test="${song.status=='ALIVAIBLE'}">
+                                                            <td> <button style="width:2px;height: 2px; text-align: center;margin-left: 20px; margin-right: 20px"
+                                                                         class= "btn  btn-success" </button> </td>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <td> <button style="width:2px;height: 2px; text-align: center;margin-left: 20px; margin-right: 20px"
+                                                                         class="btn  btn-danger"
+                                                            ></button> </td>
+                                                        </c:otherwise>
+                                                    </c:choose>
                                                     <td>
                                                         <button class="btn btn-outline btn-primary" data-toggle="modal"
                                                                 data-target="#editModal" onclick="editsong(${song.id},'${song.songName}','${song.singerName}')" >Edit</button>
@@ -263,7 +273,7 @@
                                                                                 <label for="statusselect" >Select Status</label>
                                                                                 <br>
                                                                                <select  name="statusselect" id="statusselect">
-                                                                                <option id="optionAlivai"  value="alivaible">ALIVAILBLE</option>
+                                                                                <option id="optionAlivai"  value="alivaible">ALIVAIBLE</option>
                                                                                 <option  id="optionDisab" value="disabled">DISABLED</option>
                                                                                </select>
                                                                             </div>
