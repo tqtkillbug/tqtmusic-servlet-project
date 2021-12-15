@@ -9,10 +9,10 @@
 </head>
 <body>
     <div class="container">
-        <h3>Verify Email To Register TQT Music</h3>
+        <h3 style="padding-left: 250px">Verify Email To Register TQT Music</h3>
         <form action="ServletVerifyEmail" method="post">
         <fieldset>
-            <label id="verify-email" for="password-input">Enter Code is sent to email: <span
+            <label id="verify-email" for="password-input">Enter Code is sent to email: ${email} <span
                     id="email-verify"> </span> </label>
             <input type="text" name="code-input" id="password-input" inputmode="numeric" minlength="6"
                 maxlength="6" size="6" value="">

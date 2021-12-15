@@ -48,10 +48,15 @@ public class ServletSong extends HttpServlet {
         List<Song> songList = songService.selectAllSong();
         HttpSession session = request.getSession(true);
         User admin = (User) session.getAttribute("userLogin");
-        request.setAttribute("admin", admin);
-        request.setAttribute("listSong", songList);
-        RequestDispatcher dispatcher = request.getRequestDispatcher("pages/musicmanager.jsp");
-        dispatcher.forward(request, response);
+        if (admin != null){
+            request.setAttribute("admin", admin);
+            request.setAttribute("listSong", songList);
+            RequestDispatcher dispatcher = request.getRequestDispatcher("pages/musicmanager.jsp");
+            dispatcher.forward(request, response);
+        } else{
+            RequestDispatcher dispatcher = request.getRequestDispatcher("404.jsp");
+            dispatcher.forward(request, response);
+        }
     }
 
     @Override

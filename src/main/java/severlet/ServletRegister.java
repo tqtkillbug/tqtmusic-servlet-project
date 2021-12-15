@@ -40,13 +40,11 @@ public class ServletRegister extends HttpServlet {
         String status = "ACTIVE";
         System.out.println(systemCode);
         User newuser = userService.getByUsername(username);
-        if (newuser == null){
-            User user = new User(fullname, username, email, password,role,systemCode,status);
-            String json = JacksonParser.INSTANCE.toJson(user);
-            String dataEncode = URLEncoder.encode(json, StandardCharsets.UTF_8);
-            System.out.println(user);
-
-            response.addCookie(new Cookie("user",dataEncode));
+        User user = userService.getByEmail(email);
+        System.out.println(user);
+        System.out.println(newuser);
+        if (newuser == null && user == null){
+            User userRegister = new User(fullname, username, email, password,role,systemCode,status);
             try {
                 String contentMail = "Key Verify Email From TQT MUSIC IS: " + systemCode;
                 SendKeyToMail.send(email, contentMail);
@@ -54,10 +52,13 @@ public class ServletRegister extends HttpServlet {
             } catch (MessagingException | UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
+            HttpSession session = request.getSession(true);
+            session.setAttribute("userRegister",userRegister);
+            request.setAttribute("email",email);
             RequestDispatcher dispatcher = request.getRequestDispatcher("/verify-email.jsp");
             dispatcher.forward(request, response);
         } else{
-            String message = "Username already exists, please try again";
+            String message = "Username or email already exists, please try again";
             request.setAttribute("message",message);
             RequestDispatcher dispatcher = request.getRequestDispatcher("/register.jsp");
             dispatcher.forward(request, response);

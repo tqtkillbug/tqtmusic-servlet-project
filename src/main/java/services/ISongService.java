@@ -14,4 +14,6 @@ public interface ISongService {
     boolean updateSong(Song song) throws SQLException;
 
     boolean deleteSong(int id) throws SQLException;
+
+    int getSongCount();
 }

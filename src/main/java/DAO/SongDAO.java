@@ -18,6 +18,7 @@ public class SongDAO implements ISongDAO {
     private static final String INSERT_SONG_SQL = "INSERT INTO songs (songname,singername,songpath,logopath,status) VALUES (?, ?,?,?,?);";
     private static final String SELECT_ALL_SONG = "select * from songs";
     private static final String DELETE_SONG_SQL = "delete from songs where id = ?;";
+    private static final String SELECT_COUNT_SONG_SQL = "SELECT COUNT(id) FROM songs ";
     private static final String UPDATE_SONG_SQL = "update songs set songname = ?,singername= ? ,status= ? where id = ?;";
 
     public SongDAO(){
@@ -45,7 +46,20 @@ public class SongDAO implements ISongDAO {
         }
         return songs;
     }
-
+    @Override
+    public int getCount(){
+        int rows = 0;
+        try (Connection connection = MysqlConnection.getInstance().getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_COUNT_SONG_SQL);) {
+            System.out.println(preparedStatement);
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                rows = rs.getInt("count(id)");
+            }
+        } catch (SQLException ignored) {
+        }
+        return rows;
+    }
     @Override
     public void insertSong(Song newSong){
         System.out.println(INSERT_SONG_SQL);

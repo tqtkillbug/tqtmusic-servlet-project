@@ -14,8 +14,10 @@ public class UserDAO implements IUserDAO {
 
 
     private static final String SELECT_USER_BY_USERNAME_AND_PASSWORD = "select username,password,role from user where username = ? and password = ? ";
+    private static final String SELECT_USER_BY_EMAIL = "select username,password,role from user where email = ?";
     private static final String INSERT_USERS_SQL = "INSERT INTO user (fullname,username,email,password,role,status) VALUES (?, ?,?,?,?,?);";
     private static final String SELECT_USERS_SQL = "select id,fullname,email,gender from user where id =?, email= ?";
+    private static final String SELECT_COUNT_USER_SQL = "SELECT COUNT(id) FROM user where role = ?;";
     private static final String SELECT_ALL_USERS = "select * from user";
     private static final String SELECT_USER_BY_ID = "select id,fullname,email,username,role,status from user where id = ?;";
     private static final String SELECT_USER_BY_USERNAME = "select id,fullname,email,username,role,status from user where username = ?;";
@@ -72,6 +74,23 @@ public class UserDAO implements IUserDAO {
         }
         return user;
     }
+    @Override
+    public int getCount(String role){
+        int rows = 0;
+        try (Connection connection = MysqlConnection.getInstance().getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_COUNT_USER_SQL);) {
+            preparedStatement.setString(1, role);
+            System.out.println(preparedStatement);
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                rows = rs.getInt("count(id)");
+            }
+        } catch (SQLException ignored) {
+        }
+        return rows;
+    }
+
+
  @Override
  public User getUserByUsername(String username){
      User user = null;
@@ -104,6 +123,24 @@ public class UserDAO implements IUserDAO {
              PreparedStatement preparedStatement = connection.prepareStatement(SELECT_USER_BY_USERNAME_AND_PASSWORD);) {
             preparedStatement.setString(1, ipusername);
             preparedStatement.setString(2, ippassword);
+            System.out.println(preparedStatement);
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                String userName = rs.getString("username");
+                String password = rs.getString("password");
+                String role = rs.getString("role");
+                user = new User(userName, password, role);
+            }
+        } catch (SQLException ignored) {
+        }
+        return user;
+    }
+    @Override
+    public User selectUserByEmail(String email) {
+        User user = null;
+        try (Connection connection = MysqlConnection.getInstance().getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_USER_BY_EMAIL);) {
+             preparedStatement.setString(1, email);
             System.out.println(preparedStatement);
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {

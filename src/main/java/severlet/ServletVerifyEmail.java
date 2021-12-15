@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
+import java.sql.SQLOutput;
 
 @WebServlet(name = "ServletVerifyEmail", value = "/ServletVerifyEmail")
 public class ServletVerifyEmail extends HttpServlet {
@@ -33,29 +34,12 @@ public class ServletVerifyEmail extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String inputCode = request.getParameter("code-input");
-        Cookie[] cookies = request.getCookies();
-        String json = null;
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("user"))
-                    json = URLDecoder.decode(cookie.getValue(), StandardCharsets.UTF_8);
-            }
-        } else{
-            System.out.println("Cookie Is Null");
-        }
-        User user = JacksonParser.INSTANCE.toObject(json, User.class);
-        String systemCode = user.getCode();
-        if (systemCode.equals(inputCode)) {
-            String fullname  = user.getFullName();
-            String username  = user.getUsername();
-            String email  = user.getEmail();
-            String password  = user.getPassword();
-            String role  = user.getRole();
-            String status = user.getStatus();
-            User newUser = new User(fullname, username, email, password,role,status);
-            System.out.println(newUser);
+        HttpSession session = request.getSession(true);
+        User userRegister = (User) session.getAttribute("userRegister");
+        System.out.println(userRegister);
+        if (userRegister.getCode().equals(inputCode)) {
             try {
-                userDAO.insertUser(newUser);
+                userDAO.insertUser(userRegister);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -67,10 +51,6 @@ public class ServletVerifyEmail extends HttpServlet {
             RequestDispatcher dispatcher = request.getRequestDispatcher("/register.jsp");
             dispatcher.forward(request, response);
         }
-
-        Cookie killMyCookie = new Cookie("user", null);
-        killMyCookie.setMaxAge(0);
-        response.addCookie(killMyCookie);
 
     }
 }

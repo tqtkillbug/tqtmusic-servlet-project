@@ -1,30 +1,43 @@
 package severlet;
 
-import DAO.UserDAO;
 import model.User;
-import services.IUserService;
-import services.Login;
-import services.UserService;
+import services.*;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
+import java.util.ArrayList;
 
 @WebServlet(name = "ServletLogin", value = "/login")
 public class ServletLogin extends HttpServlet {
 
-    private UserDAO userDAO;
     private IUserService userService;
+    private ISongService songService;
 
     public void init(){
-        userDAO = new UserDAO();
         userService = new UserService();
+        songService = new SongService();
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String action = request.getParameter("action");
+        if (action == null) {
+            action = "";
+        }
+        switch (action) {
+            case "logOut":
+                logOutUser(request, response);
+                break;
+        }
+    }
 
+    private void logOutUser(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session = request.getSession(true);
+        session.removeAttribute("userLogin");
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/index.jsp");
+        dispatcher.forward(request, response);
     }
 
     @Override
@@ -44,6 +57,14 @@ public class ServletLogin extends HttpServlet {
                 dispatcher.forward(request, response);
             }
             if (userLogin.getRole().equals("ADMIN") || userLogin.getRole().equals("BOSS")){
+                ArrayList<Integer> quantityList = new ArrayList<>();
+                int adminQuantity = userService.getCountByRole("ADMIN");
+                int userQuantity = userService.getCountByRole("USER");
+                int songQuantity = songService.getSongCount();
+                quantityList.add(adminQuantity);
+                quantityList.add(userQuantity);
+                quantityList.add(songQuantity);
+                request.setAttribute("quantity", quantityList);
                 request.setAttribute("admin",userLogin);
                 RequestDispatcher dispatcher = request.getRequestDispatcher("pages/dashboard.jsp");
                 dispatcher.forward(request, response);
@@ -56,4 +77,9 @@ public class ServletLogin extends HttpServlet {
         }
 
     }
+
+
+
+
+
 }

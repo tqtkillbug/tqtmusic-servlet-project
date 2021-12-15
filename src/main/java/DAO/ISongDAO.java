@@ -9,6 +9,8 @@ public interface ISongDAO {
     List<Song> selectAllSong();
 
 
+    int  getCount();
+
     void insertSong(Song newSong);
 
     boolean updateSong(Song song) throws SQLException;

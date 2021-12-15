@@ -30,4 +30,8 @@ public class SongService implements ISongService{
     public boolean deleteSong(int id) throws SQLException {
         return songDAO.deleteSong(id);
     }
+    @Override
+    public int getSongCount(){
+        return songDAO.getCount();
+    }
 }

@@ -10,9 +10,13 @@ public interface IUserDAO {
 
     User getUserById(int id) throws SQLException;
 
+    int getCount(String role);
+
     User getUserByUsername(String username);
 
     User selectUser(String username, String password);
+
+    User selectUserByEmail(String email);
 
     List<User> selectAllUser();
 

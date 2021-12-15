@@ -1,9 +1,7 @@
 package severlet;
 
 import model.User;
-import services.IUserService;
-import services.SendKeyToMail;
-import services.UserService;
+import services.*;
 
 import javax.mail.MessagingException;
 import javax.servlet.*;
@@ -12,15 +10,19 @@ import javax.servlet.annotation.*;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 @WebServlet(name = "ServletAdmin", value = "/pages")
 public class ServletAdmin extends HttpServlet {
 
     private IUserService userService;
+    private ISongService songService;
+
 
     public void init() {
         userService = new UserService();
+        songService = new SongService();
     }
 
     @Override
@@ -49,10 +51,37 @@ public class ServletAdmin extends HttpServlet {
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
+            case "dashboard":
+                loadDashboard(request,response);
+                break;
         }
     }
 
+    private void loadDashboard(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session = request.getSession(true);
+        User admin = (User) session.getAttribute("userLogin");
+        if (admin!=null){
+            ArrayList<Integer> quantityList = new ArrayList<>();
+            int adminQuantity = userService.getCountByRole("ADMIN");
+            int userQuantity = userService.getCountByRole("USER");
+            int songQuantity = songService.getSongCount();
+            quantityList.add(adminQuantity);
+            quantityList.add(userQuantity);
+            quantityList.add(songQuantity);
+            request.setAttribute("quantity", quantityList);
+            request.setAttribute("admin", admin);
+            RequestDispatcher dispatcher = request.getRequestDispatcher("pages/dashboard.jsp");
+            dispatcher.forward(request, response);
+        }else{
+            notFoundPage(request,response);
+        }
 
+    }
+
+    private void notFoundPage(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        RequestDispatcher dispatcher = request.getRequestDispatcher("404.jsp");
+        dispatcher.forward(request, response);
+    }
 
     private void setStatus(HttpServletRequest request, HttpServletResponse response, String status) throws SQLException, IOException, ServletException {
         int id = Integer.parseInt(request.getParameter("id"));
@@ -74,10 +103,14 @@ public class ServletAdmin extends HttpServlet {
         List<User> listUser = userService.getUsers();
         request.setAttribute("listUser", listUser);
         HttpSession session = request.getSession(true);
-        User admin = (User) session.getAttribute("userLogin");
-        request.setAttribute("admin", admin);
-        RequestDispatcher dispatcher = request.getRequestDispatcher("pages/usermanager.jsp");
-        dispatcher.forward(request, response);
+        User admin = (User) session.getAttribute("userogin");
+        if (admin!=null){
+            request.setAttribute("admin", admin);
+            RequestDispatcher dispatcher = request.getRequestDispatcher("pages/usermanager.jsp");
+            dispatcher.forward(request, response);
+        } else{
+            notFoundPage(request,response);
+        }
     }
 
     @Override

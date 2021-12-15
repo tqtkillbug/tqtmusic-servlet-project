@@ -21,4 +21,8 @@ public interface IUserService {
     void addUser(User user) throws SQLException;
 
     User getByUsername(String username);
+
+    int getCountByRole(String role);
+
+    User getByEmail(String email);
 }
